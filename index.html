@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>系统安全中心</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000; color: #f00; font-family: monospace, 'Courier New', Courier;
+    overflow: hidden; height: 100vh; width: 100vw; position: relative;
+    user-select: none; -webkit-user-select: none; touch-action: none;
+  }
+
+  /* 开场伪装 */
+  #start-screen {
+    position: fixed; inset: 0; background: #111; z-index: 100;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    color: #fff; font-family: sans-serif;
+  }
+  .shield-icon { font-size: 60px; margin-bottom: 20px; animation: pulse 2s infinite; }
+  #start-btn {
+    padding: 15px 40px; font-size: 18px; background: #007aff; color: #fff;
+    border: none; border-radius: 30px; font-weight: bold; cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,122,255,0.4); margin-top: 30px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* 病毒爆发层 */
+  #virus-screen {
+    position: fixed; inset: 0; background: #000; z-index: 90;
+    display: none; flex-direction: column; overflow: hidden;
+  }
+  .alert-bg {
+    position: absolute; inset: 0; background: rgba(255, 0, 0, 0.15);
+    animation: flash 0.2s infinite alternate;
+  }
+  #matrix {
+    position: absolute; inset: 0; color: #f00; font-size: 14px;
+    line-height: 1.2; opacity: 0.6; word-wrap: break-word;
+    pointer-events: none; font-family: monospace;
+  }
+  .skull-container {
+    position: absolute; top: 20%; left: 0; width: 100%; text-align: center;
+    z-index: 95; animation: shakeScreen 0.5s infinite;
+  }
+  .skull { font-size: 100px; text-shadow: 0 0 30px #f00; }
+  .virus-title {
+    font-size: clamp(24px, 6vw, 40px); font-weight: bold; color: #f00;
+    text-shadow: 0 0 10px #f00; margin-top: 10px; text-align: center;
+  }
+  .virus-desc {
+    color: #fff; font-size: 16px; text-align: center; padding: 0 20px;
+    margin-top: 20px; line-height: 1.5; font-family: sans-serif;
+  }
+  
+  /* 勒索按钮 */
+  .ransom-btn {
+    position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+    padding: 15px 40px; background: #f00; color: #fff; border: 2px solid #fff;
+    border-radius: 5px; font-size: 20px; font-weight: bold; font-family: sans-serif;
+    cursor: pointer; z-index: 96; animation: blinkBtn 0.5s infinite;
+    box-shadow: 0 0 20px #f00;
+  }
+
+  /* 反转层 */
+  #joke-screen {
+    position: fixed; inset: 0; background: #fff; z-index: 200;
+    display: none; flex-direction: column; justify-content: center; align-items: center;
+    overflow: hidden;
+  }
+  .joke-text {
+    font-size: clamp(30px, 8vw, 60px); font-weight: 900;
+    color: #ff3b30; font-family: 'PingFang SC', sans-serif;
+    text-shadow: 2px 2px 0px #ffcc00; z-index: 205;
+    animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  .joke-sub {
+    font-size: 18px; color: #666; margin-top: 15px; z-index: 205;
+    font-family: sans-serif; font-weight: bold;
+  }
+  /* 掉落物容器 */
+  .falling-item {
+    position: absolute; top: -50px; font-size: 30px; z-index: 201;
+    animation: fall linear forwards;
+  }
+
+  /* 动画库 */
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @keyframes flash { from { opacity: 0.3; } to { opacity: 0.8; } }
+  @keyframes blinkBtn { 0%, 100% { background: #f00; } 50% { background: #900; } }
+  @keyframes shakeScreen {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-5px, 5px) rotate(-1deg); }
+    50% { transform: translate(5px, -5px) rotate(1deg); }
+    75% { transform: translate(-5px, -5px) rotate(0deg); }
+    100% { transform: translate(5px, 5px) rotate(1deg); }
+  }
+  @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+</style>
+</head>
+<body>
+
+  <!-- 伪装的起始页 -->
+  <div id="start-screen">
+    <div class="shield-icon">🛡️</div>
+    <h2>手机安全防护中心</h2>
+    <p style="color:#888; margin-top:10px; font-size:14px;">您的手机存在高危漏洞，建议立即扫描</p>
+    <button id="start-btn">立即修复</button>
+  </div>
+
+  <!-- 爆发层 -->
+  <div id="virus-screen">
+    <div class="alert-bg"></div>
+    <div id="matrix"></div>
+    <div class="skull-container">
+      <div class="skull">💀</div>
+      <div class="virus-title">警告！系统已崩溃</div>
+    </div>
+    <div class="virus-desc">
+      检测到您的设备已被“想哭”勒索病毒感染。<br>
+      相册、微信、通讯录等数据已被加密。<br>
+      请在 10 分钟内支付 50 元解密费用，否则数据将被永久销毁！
+    </div>
+    <button class="ransom-btn" id="pay-btn">扫码支付 ¥50 解密</button>
+  </div>
+
+  <!-- 反转层 -->
+  <div id="joke-screen">
+    <div class="joke-text">哈哈，你被骗啦！🎉</div>
+    <div class="joke-sub">手机没坏，就是逗你玩~ 别打我！</div>
+  </div>
+
+<script>
+  const startScreen = document.getElementById('start-screen');
+  const startBtn = document.getElementById('start-btn');
+  const virusScreen = document.getElementById('virus-screen');
+  const matrix = document.getElementById('matrix');
+  const payBtn = document.getElementById('pay-btn');
+  const jokeScreen = document.getElementById('joke-screen');
+
+  // 1. 假乱码生成
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:<>?~';
+  let matrixInterval;
+  
+  function generateMatrix() {
+    let str = '';
+    for (let i = 0; i < 600; i++) {
+      str += chars[Math.floor(Math.random() * chars.length)];
+      if (i % 60 === 0) str += '<br>';
+    }
+    matrix.innerHTML = str;
+  }
+
+  // 2. 手机震动与警报音效 (利用 Web Audio API)
+  let audioCtx;
+  function playAlarm() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    // 制造一个像防空警报一样的滑音
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + 0.5);
+    osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 1.0);
+    
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.0);
+    
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    osc.start();
+    osc.stop(audioCtx.currentTime + 1.0);
+  }
+
+  function vibratePhone() {
+    if (navigator.vibrate) {
+      // 有节奏的震动：[震200ms, 停100ms, 震200ms, 停100ms]
+      navigator.vibrate([200, 100, 200, 100, 200, 100, 500]);
+    }
+  }
+
+  // 3. 点击开始
+  startBtn.addEventListener('click', () => {
+    startScreen.style.display = 'none';
+    virusScreen.style.display = 'block';
+    
+    // 初始化音频上下文 (必须在用户点击后)
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // 开始乱码滚动
+    matrixInterval = setInterval(generateMatrix, 50);
+    
+    // 播放警报声和震动
+    playAlarm();
+    vibratePhone();
+    
+    // 循环播放警报和震动 (每2秒一次)
+    let alarmInterval = setInterval(() => {
+      playAlarm();
+      vibratePhone();
+    }, 2000);
+
+    // 保存定时器以便后续清除
+    virusScreen.dataset.interval = alarmInterval;
+  });
+
+  // 4. 点击支付（反转）
+  payBtn.addEventListener('click', () => {
+    // 停止警报和乱码
+    clearInterval(Number(virusScreen.dataset.interval));
+    clearInterval(matrixInterval);
+    if (navigator.vibrate) navigator.vibrate(0); // 停止震动
+    
+    // 关闭病毒层，显示搞笑层
+    virusScreen.style.display = 'none';
+    jokeScreen.style.display = 'flex';
+
+    // 播放欢快的音效 (简单的C大调琶音)
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+      notes.forEach((freq, index) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, ctx.currentTime + index*0.1);
+        gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + index*0.1 + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + index*0.1 + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + index*0.1);
+        osc.stop(ctx.currentTime + index*0.1 + 0.5);
+      });
+    } catch(e){}
+
+    // 生成满屏掉落的表情包
+    const emojis = ['😂', '🤣', '🤪', '🧧', '💰', '🎉', '💖', '🥳'];
+    for (let i = 0; i < 50; i++) {
+      setTimeout(createFallingItem, i * 50);
+    }
+  });
+
+  function createFallingItem() {
+    const item = document.createElement('div');
+    item.className = 'falling-item';
+    item.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+    item.style.left = Math.random() * 100 + 'vw';
+    // 随机大小
+    const scale = Math.random() * 1.5 + 0.5;
+    item.style.transform = `scale(${scale})`;
+    // 随机下落速度和持续时间
+    const duration = Math.random() * 2 + 1.5;
+    item.style.animationDuration = duration + 's';
+    
+    jokeScreen.appendChild(item);
+    
+    // 动画结束后移除节点，防止卡顿
+    setTimeout(() => {
+      item.remove();
+    }, duration * 1000);
+  }
+</script>
+</body>
+</html>
